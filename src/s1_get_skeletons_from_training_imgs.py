@@ -49,6 +49,9 @@ if True:  # Include project path
 
 
 def par(path):  # Pre-Append ROOT to the path if it's not absolute
+    
+    print('Root', ROOT, 'Path', path)
+
     return ROOT + path if (path and path[0] != "/") else path
 
 # -- Settings

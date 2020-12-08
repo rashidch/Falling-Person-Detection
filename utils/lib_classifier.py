@@ -184,7 +184,7 @@ class ClassifierOnlineTest(object):
             for score in self.scores_hist:
                 score_sums += score
             score_sums /= len(self.scores_hist)
-            print("\nMean score:\n", score_sums)
+            #print("\nMean score:\n", score_sums)
             return score_sums
 
         else:  # Use multiply
@@ -199,18 +199,14 @@ class ClassifierOnlineTest(object):
 
         for i in range(-1, len(self.action_labels)):
 
-            FONT_SIZE = 0.7
-            TXT_X = 20
-            TXT_Y = 150 + i*30
+            FONT_SIZE = 1
             COLOR_INTENSITY = 255
 
-            if i == -1:
-                s = "P{}:".format(self.human_id)
-            else:
-                label = self.action_labels[i]
-                s = "{:<5}: {:.2f}".format(label, self.scores[i])
-                COLOR_INTENSITY *= (0.0 + 1.0 * self.scores[i])**0.5
+            label = self.action_labels[i]
+            s = "{:<5}".format(label)
+        
+            if label=='FallingDown' and self.scores[i]>0.5:
 
-            cv2.putText(img_disp, text=s, org=(TXT_X, TXT_Y),
+                cv2.putText(img_disp, text='Falling Down', org=(650, 30),
                         fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=FONT_SIZE,
-                        color=(0, 0, int(COLOR_INTENSITY)), thickness=2)
+                        color=(0, 0, int(COLOR_INTENSITY)), thickness=1)

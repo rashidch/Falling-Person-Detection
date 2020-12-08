@@ -119,7 +119,7 @@ class SkeletonDetector(object):
 
         # Print result and time cost
         elapsed = time.time() - t
-        self._logger.info('inference image in %.4f seconds.' % (elapsed))
+        #self._logger.info('inference image in %.4f seconds.' % (elapsed))
 
         return humans
     
@@ -133,8 +133,8 @@ class SkeletonDetector(object):
         if IS_DRAW_FPS:
             cv2.putText(img_disp,
                         "fps = {:.1f}".format( (1.0 / (time.time() - self._prev_t) )),
-                        (10, 30),  cv2.FONT_HERSHEY_SIMPLEX, 1,
-                        (0, 0, 255), 2)
+                        (10, 50),  cv2.FONT_HERSHEY_SIMPLEX, 1,
+                        (0, 0, 255), 1)
         self._prev_t = time.time()
 
     def humans_to_skels_list(self, humans, scale_h = None): 

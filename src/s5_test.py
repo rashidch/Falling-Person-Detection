@@ -48,7 +48,9 @@ if True:  # Include project path
     import sys
     import os
     ROOT = os.path.dirname(os.path.abspath(__file__))+"/../"
+    print('Root', ROOT)
     CURR_PATH = os.path.dirname(os.path.abspath(__file__))+"/"
+    print('Curr_path', CURR_PATH)
     sys.path.append(ROOT)
 
     import utils.lib_images_io as lib_images_io
@@ -89,6 +91,7 @@ def get_command_line_arguments():
         args = parser.parse_args()
         return args
     args = parse_args()
+    print('data_path[0]', args.data_path[0])
     if args.data_type != "webcam" and args.data_path and args.data_path[0] != "/":
         # If the path is not absolute, then its relative to the ROOT.
         args.data_path = ROOT + args.data_path
@@ -263,12 +266,12 @@ def draw_result_img(img_disp, ith_img, humans, dict_id2skeleton,
     # Resize to a proper size for display
     r, c = img_disp.shape[0:2]
     desired_cols = int(1.0 * c * (img_disp_desired_rows / r))
-    img_disp = cv2.resize(img_disp,
-                          dsize=(desired_cols, img_disp_desired_rows))
+    img_disp = cv2.resize(img_disp,dsize=(desired_cols, img_disp_desired_rows))
 
     # Draw all people's skeleton
     skeleton_detector.draw(img_disp, humans)
 
+    '''
     # Draw bounding box and label of each person
     if len(dict_id2skeleton):
         for id, label in dict_id2label.items():
@@ -279,16 +282,15 @@ def draw_result_img(img_disp, ith_img, humans, dict_id2skeleton,
             lib_plot.draw_action_result(img_disp, id, skeleton, label)
 
     # Add blank to the left for displaying prediction scores of each class
-    img_disp = lib_plot.add_white_region_to_left_of_image(img_disp)
+    #img_disp = lib_plot.add_white_region_to_left_of_image(img_disp)
 
-    cv2.putText(img_disp, "Frame:" + str(ith_img),
-                (20, 20), fontScale=1.5, fontFace=cv2.FONT_HERSHEY_PLAIN,
-                color=(0, 0, 0), thickness=2)
-
+    #cv2.putText(img_disp, "Frame:" + str(ith_img),
+    #            (400, 20), fontScale=1.5, fontFace=cv2.FONT_HERSHEY_PLAIN,
+    #            color=(0, 0, 0), thickness=2)
+    '''
     # Draw predicting score for only 1 person
     if len(dict_id2skeleton):
-        classifier_of_a_person = multiperson_classifier.get_classifier(
-            id='min')
+        classifier_of_a_person = multiperson_classifier.get_classifier(id='min')
         classifier_of_a_person.draw_scores_onto_image(img_disp)
     return img_disp
 
