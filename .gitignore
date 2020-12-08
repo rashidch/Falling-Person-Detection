@@ -1,5 +1,6 @@
 
 data/*
+data_proc/*
 data_test/*
 papers/*
 others/*
@@ -24,6 +25,7 @@ tmp*
 *.pickle
 *.pyc
 *.avi
+*.mp4
 *.gif
 *.pth
 *.zip
