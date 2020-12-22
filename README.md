@@ -14,10 +14,6 @@ This repo is build on top of [https://github.com/felixchenfy/Realtime-Action-Rec
 **Highlights**: 
 2 Poses; one person; Real-time and multi-frame based recognition algorithm.
 
-**Updates**: On 2019-10-26, I refactored the code; added more comments; and put all settings into the [config/config.yaml](config/config.yaml) file, including: classes of actions, input and output of each file, OpenPose settings, etc. 
-
-**Warning:** Since I used the 10 fps video and 0.5s-window for training, you must also limit your video fps to be about 10 fps (7~12 fps) if you want to test my pretrained model on your own video or web camera. 
-
 **Contents:**
 - [1. Algorithm](#1-algorithm)
 - [2. Install Dependency (OpenPose)](#2-install-dependency--openpose-)
@@ -41,7 +37,7 @@ This repo is build on top of [https://github.com/felixchenfy/Realtime-Action-Rec
 # 1. Algorithm
 
 
-I collected videos of 9 Types of actions: `['stand', 'walk', 'run', 'jump', 'sit', 'squat', 'kick', 'punch', 'wave']`. The total video lengths are about 20 mins, containing about 10000 video frames recorded at 10 frames per second.
+We collected videos of Falling Persons with 3 poses: `['Falling', 'Standing', 'Sitting']`. 
 
 The workflow of the algorithm is:
 *  Get the joints' positions by [OpenPose](https://github.com/ildoonet/tf-pose-estimation).  
