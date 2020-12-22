@@ -6,7 +6,7 @@
 #     The image whose label is not in `classes` will be filtered out. 
 
 #classes: ['stand', 'walk', 'run', 'jump', 'sit', 'squat', 'kick', 'punch', 'wave']
-classes: ['FallingDown', 'Standing']
+classes: ['Falling', 'Standing', Sitting]
 
 image_filename_format: "{:05d}.png"
 skeleton_filename_format: "{:05d}.txt"
@@ -20,7 +20,7 @@ s1_get_skeletons_from_training_imgs.py:
     img_size: 656x368 #  656x368, or 432x368, 336x288. Bigger is more accurate.
   input:
     images_description_txt: data/Falling_Standing/valid_images.txt
-    images_folder: data/Falling_Standing/4
+    images_folder: data/frames_data/
 
 
   output:

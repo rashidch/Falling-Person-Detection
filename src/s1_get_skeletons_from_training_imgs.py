@@ -94,7 +94,7 @@ class ImageDisplayer(object):
     ''' A simple wrapper of using cv2.imshow to display image '''
 
     def __init__(self):
-        self._window_name = "cv2_display_window"
+        self._window_name = "Get Skeleton Window"
         cv2.namedWindow(self._window_name)
 
     def display(self, image, wait_key_ms=1):
@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
         # -- Detect
         humans = skeleton_detector.detect(img)
-
+        
         # -- Draw
         img_disp = img.copy()
         skeleton_detector.draw(img_disp, humans)

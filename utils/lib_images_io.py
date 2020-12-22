@@ -207,10 +207,10 @@ class VideoWriter(object):
             self._video_writer = cv2.VideoWriter(
                 self._video_path, fourcc, self._framerate, (self._width, self._height))
         self._video_writer.write(img)
-
+    
     def stop(self):
         self.__del__()
-
+    
     def __del__(self):
         if self._cnt_img > 0:
             self._video_writer.release()
