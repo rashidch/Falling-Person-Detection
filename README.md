@@ -1,9 +1,13 @@
 
-# Falling Person Detection Inside Elevator Based-on Human Skeleton data and ROI based data  
+# Falling Person Detection Inside Elevator Based-on Human Skeleton data and ROI based data 
 
-![](https://github.com/rashidch/Falling-Person-Detection/blob/master/doc/video.gif)
+**Result of Skeleton based Model**
 
-![]()
+![Result of Skeleton based Model](https://github.com/rashidch/Falling-Person-Detection/blob/master/doc/video.gif)
+
+**Result of ROI based Model**
+
+![Result of ROI based Model](https://github.com/rashidch/Falling-Person-Detection/blob/master/doc/ROI_MODEL_result.jpg)
 
 This repo is build on top of [https://github.com/felixchenfy/Realtime-Action-Recognition](https://github.com/felixchenfy/Realtime-Action-Recognition)
 
