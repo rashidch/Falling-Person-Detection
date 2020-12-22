@@ -21,13 +21,12 @@ README2.md
 run_bash.md
 tmp*
 
-*.png
+
 *.jpg
 *.pickle
 *.pyc
 *.avi
 *.mp4
-*.gif
 *.pth
 *.zip
 
