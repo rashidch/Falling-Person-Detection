@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-'''
+"""
 Read multiple skeletons txts and saved them into a single txt.
 If an image doesn't have skeleton, discard it.
 If an image label is not `CLASSES`, discard it.
@@ -10,7 +10,7 @@ Input:
     `skeletons/00001.txt` ~ `skeletons/xxxxx.txt` from `SRC_DETECTED_SKELETONS_FOLDER`.
 Output:
     `skeletons_info.txt`. The filepath is `DST_ALL_SKELETONS_TXT`.
-'''
+"""
 
 import numpy as np
 import simplejson
@@ -19,8 +19,9 @@ import collections
 if True:  # Include project path
     import sys
     import os
-    ROOT = os.path.dirname(os.path.abspath(__file__))+"/../"
-    CURR_PATH = os.path.dirname(os.path.abspath(__file__))+"/"
+
+    ROOT = os.path.dirname(os.path.abspath(__file__)) + "/../"
+    CURR_PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
     sys.path.append(ROOT)
 
     # import utils.lib_feature_proc # This is no needed,
@@ -32,6 +33,7 @@ if True:  # Include project path
 
 def par(path):  # Pre-Append ROOT to the path if it's not absolute
     return ROOT + path if (path and path[0] != "/") else path
+
 
 # -- Settings
 
@@ -53,45 +55,45 @@ IDX_ACTION_LABEL = 3  # [1, 7, 54, "jump", "jump_03-02-12-34-01-795/00240.jpg"]
 
 
 def read_skeletons_from_ith_txt(i):
-    ''' 
+    """
     Arguments:
         i {int}: the ith skeleton txt. Zero-based index.
             If there are mutliple people, then there are multiple skeletons' data in this txt.
     Return:
         skeletons_in_ith_txt {list of list}:
-            Length of each skeleton data is supposed to be 41 = 5 image info + 36 xy positions. 
-    '''
-    filename = SRC_DETECTED_SKELETONS_FOLDER + \
-        SKELETON_FILENAME_FORMAT.format(i)
+            Length of each skeleton data is supposed to be 41 = 5 image info + 36 xy positions.
+    """
+    filename = SRC_DETECTED_SKELETONS_FOLDER + SKELETON_FILENAME_FORMAT.format(i)
     skeletons_in_ith_txt = lib_commons.read_listlist(filename)
     return skeletons_in_ith_txt
 
 
 def get_length_of_one_skeleton_data(filepaths):
-    ''' Find a non-empty txt file, and then get the length of one skeleton data.
+    """Find a non-empty txt file, and then get the length of one skeleton data.
     The data length should be 41, where:
     41 = 5 + 36.
         5: [cnt_action, cnt_clip, cnt_image, action_label, filepath]
             See utils.lib_io.get_training_imgs_info for more details
         36: 18 joints * 2 xy positions
-    '''
+    """
     for i in range(len(filepaths)):
         skeletons = read_skeletons_from_ith_txt(i)
         if len(skeletons):
             skeleton = skeletons[IDX_PERSON]
             data_size = len(skeleton)
-            assert(data_size == 41)
+            assert data_size == 41
             return data_size
     raise RuntimeError(f"No valid txt under: {SRC_DETECTED_SKELETONS_FOLDER}.")
 
 
 # -- Main
 if __name__ == "__main__":
-    ''' Read multiple skeletons txts and saved them into a single txt. '''
+    """ Read multiple skeletons txts and saved them into a single txt. """
 
     # -- Get skeleton filenames
-    filepaths = lib_commons.get_filenames(SRC_DETECTED_SKELETONS_FOLDER,
-                                          use_sort=True, with_folder_path=True)
+    filepaths = lib_commons.get_filenames(
+        SRC_DETECTED_SKELETONS_FOLDER, use_sort=True, with_folder_path=True
+    )
     num_skeletons = len(filepaths)
 
     # -- Check data length of one skeleton
@@ -121,7 +123,7 @@ if __name__ == "__main__":
             print("{}/{}".format(i, num_skeletons))
 
     # -- Save to txt
-    with open(DST_ALL_SKELETONS_TXT, 'w') as f:
+    with open(DST_ALL_SKELETONS_TXT, "w") as f:
         simplejson.dump(all_skeletons, f)
 
     print(f"There are {len(all_skeletons)} skeleton data.")

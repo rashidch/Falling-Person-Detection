@@ -1,4 +1,4 @@
-'''
+"""
 Description:
     Convert a folder of images to a video file.
     
@@ -9,7 +9,7 @@ Example of usage:
         --framerate 30 \
         --sample_interval 1
 
-'''
+"""
 
 import numpy as np
 import cv2
@@ -23,19 +23,25 @@ import os
 import csv
 import glob
 import argparse
-ROOT = os.path.dirname(os.path.abspath(__file__))+"/"
+
+ROOT = os.path.dirname(os.path.abspath(__file__)) + "/"
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Convert a folder of images into a video.")
+        description="Convert a folder of images into a video."
+    )
     parser.add_argument("-i", "--input_folder_path", type=str, required=True)
     parser.add_argument("-o", "--output_video_path", type=str, required=True)
-    parser.add_argument("-r", "--framerate", type=int, required=False,
-                        default=30)
-    parser.add_argument("-s", "--sample_interval", type=int, required=False,
-                        default=1,
-                        help="Sample every nth image for creating video. Default 1.")
+    parser.add_argument("-r", "--framerate", type=int, required=False, default=30)
+    parser.add_argument(
+        "-s",
+        "--sample_interval",
+        type=int,
+        required=False,
+        default=1,
+        help="Sample every nth image for creating video. Default 1.",
+    )
 
     args = parser.parse_args()
     return args
@@ -51,7 +57,6 @@ class ReadFromFolder(object):
             raise IOError("The folder has no images: " + folder_path)
         self.cnt_imgs = 0
         self.cur_filename = ""
-        
 
     def read_image(self):
         if self.cnt_imgs < len(self.fnames):
@@ -94,11 +99,12 @@ class VideoWriter(object):
     def write(self, img):
         self.cnt_img += 1
         if self.cnt_img == 1:  # initialize the video writer
-            fourcc = cv2.VideoWriter_fourcc(*'XVID')  # define the codec
+            fourcc = cv2.VideoWriter_fourcc(*"XVID")  # define the codec
             self.width = img.shape[1]
             self.height = img.shape[0]
             self.video_writer = cv2.VideoWriter(
-                self.video_path, fourcc, self.framerate, (self.width, self.height))
+                self.video_path, fourcc, self.framerate, (self.width, self.height)
+            )
         self.video_writer.write(img)
 
     def __del__(self):

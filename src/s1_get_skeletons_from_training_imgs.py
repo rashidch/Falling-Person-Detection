@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-'''
+"""
 Read training images based on `valid_images.txt` and then detect skeletons.
     
 In each image, there should be only 1 person performing one type of action.
@@ -30,7 +30,7 @@ Output:
     DST_IMAGES_INFO_TXT
     DST_DETECTED_SKELETONS_FOLDER
     DST_VIZ_IMGS_FOLDER
-'''
+"""
 
 import cv2
 import yaml
@@ -38,8 +38,9 @@ import yaml
 if True:  # Include project path
     import sys
     import os
-    ROOT = os.path.dirname(os.path.abspath(__file__))+"/../"
-    CURR_PATH = os.path.dirname(os.path.abspath(__file__))+"/"
+
+    ROOT = os.path.dirname(os.path.abspath(__file__)) + "/../"
+    CURR_PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
     sys.path.append(ROOT)
 
     from utils.lib_openpose import SkeletonDetector
@@ -49,10 +50,11 @@ if True:  # Include project path
 
 
 def par(path):  # Pre-Append ROOT to the path if it's not absolute
-    
-    print('Root', ROOT, 'Path', path)
+
+    print("Root", ROOT, "Path", path)
 
     return ROOT + path if (path and path[0] != "/") else path
+
 
 # -- Settings
 
@@ -76,8 +78,7 @@ if True:
     DST_IMAGES_INFO_TXT = par(cfg["output"]["images_info_txt"])
 
     # Each txt will store the skeleton of each image
-    DST_DETECTED_SKELETONS_FOLDER = par(
-        cfg["output"]["detected_skeletons_folder"])
+    DST_DETECTED_SKELETONS_FOLDER = par(cfg["output"]["detected_skeletons_folder"])
 
     # Each image is drawn with the detected skeleton
     DST_VIZ_IMGS_FOLDER = par(cfg["output"]["viz_imgs_folders"])
@@ -91,7 +92,7 @@ if True:
 
 
 class ImageDisplayer(object):
-    ''' A simple wrapper of using cv2.imshow to display image '''
+    """ A simple wrapper of using cv2.imshow to display image """
 
     def __init__(self):
         self._window_name = "Get Skeleton Window"
@@ -116,7 +117,8 @@ if __name__ == "__main__":
     images_loader = ReadValidImagesAndActionTypesByTxt(
         img_folder=SRC_IMAGES_FOLDER,
         valid_imgs_txt=SRC_IMAGES_DESCRIPTION_TXT,
-        img_filename_format=IMG_FILENAME_FORMAT)
+        img_filename_format=IMG_FILENAME_FORMAT,
+    )
     # This file is not used.
     images_loader.save_images_info(filepath=DST_IMAGES_INFO_TXT)
     img_displayer = ImageDisplayer()
@@ -135,7 +137,7 @@ if __name__ == "__main__":
 
         # -- Detect
         humans = skeleton_detector.detect(img)
-        
+
         # -- Draw
         img_disp = img.copy()
         skeleton_detector.draw(img_disp, humans)
@@ -144,25 +146,27 @@ if __name__ == "__main__":
         # -- Get skeleton data and save to file
         skeletons, scale_h = skeleton_detector.humans_to_skels_list(humans)
         dict_id2skeleton = multiperson_tracker.track(
-            skeletons)  # dict: (int human id) -> (np.array() skeleton)
-        skels_to_save = [img_info + skeleton.tolist()
-                         for skeleton in dict_id2skeleton.values()]
+            skeletons
+        )  # dict: (int human id) -> (np.array() skeleton)
+        skels_to_save = [
+            img_info + skeleton.tolist() for skeleton in dict_id2skeleton.values()
+        ]
 
         # -- Save result
 
         # Save skeleton data for training
         filename = SKELETON_FILENAME_FORMAT.format(ith_img)
         lib_commons.save_listlist(
-            DST_DETECTED_SKELETONS_FOLDER + filename,
-            skels_to_save)
+            DST_DETECTED_SKELETONS_FOLDER + filename, skels_to_save
+        )
 
         # Save the visualized image for debug
         filename = IMG_FILENAME_FORMAT.format(ith_img)
-        cv2.imwrite(
-            DST_VIZ_IMGS_FOLDER + filename,
-            img_disp)
+        cv2.imwrite(DST_VIZ_IMGS_FOLDER + filename, img_disp)
 
-        print(f"{ith_img}/{num_total_images} th image "
-              f"has {len(skeletons)} people in it")
+        print(
+            f"{ith_img}/{num_total_images} th image "
+            f"has {len(skeletons)} people in it"
+        )
 
     print("Program ends")

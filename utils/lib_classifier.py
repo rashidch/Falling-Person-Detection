@@ -1,4 +1,4 @@
-'''
+"""
 This script includes:
 
 1. ClassifierOfflineTrain
@@ -10,7 +10,7 @@ This script includes:
     Notice, this model is only for recognizing the action of one person.
     
 TODO: Add more comments to this function.
-'''
+"""
 
 import numpy as np
 import sys
@@ -38,7 +38,8 @@ from sklearn.decomposition import PCA
 if True:
     import sys
     import os
-    ROOT = os.path.dirname(os.path.abspath(__file__))+"/../"
+
+    ROOT = os.path.dirname(os.path.abspath(__file__)) + "/../"
     sys.path.append(ROOT)
 
     from utils.lib_feature_proc import FeatureGenerator
@@ -51,10 +52,10 @@ NUM_FEATURES_FROM_PCA = 50
 
 
 class ClassifierOfflineTrain(object):
-    ''' The classifer for offline training.
-        The input features to this classifier are already 
-            processed by `class FeatureGenerator`.
-    '''
+    """The classifer for offline training.
+    The input features to this classifier are already
+        processed by `class FeatureGenerator`.
+    """
 
     def __init__(self):
         self._init_all_models()
@@ -68,12 +69,12 @@ class ClassifierOfflineTrain(object):
         self.clf = self._choose_model("Neural Net")
 
     def predict(self, X):
-        ''' Predict the class index of the feature X '''
+        """ Predict the class index of the feature X """
         Y_predict = self.clf.predict(self.pca.transform(X))
         return Y_predict
 
     def predict_and_evaluate(self, te_X, te_Y):
-        ''' Test model on test set and obtain accuracy '''
+        """ Test model on test set and obtain accuracy """
         te_Y_predict = self.predict(te_X)
         N = len(te_Y)
         n = sum(te_Y_predict == te_Y)
@@ -81,7 +82,7 @@ class ClassifierOfflineTrain(object):
         return accu, te_Y_predict
 
     def train(self, X, Y):
-        ''' Train model. The result is saved into self.clf '''
+        """ Train model. The result is saved into self.clf """
         n_components = min(NUM_FEATURES_FROM_PCA, X.shape[1])
         self.pca = PCA(n_components=n_components, whiten=True)
         self.pca.fit(X)
@@ -97,9 +98,18 @@ class ClassifierOfflineTrain(object):
         return self.classifiers[idx]
 
     def _init_all_models(self):
-        self.names = ["Nearest Neighbors", "Linear SVM", "RBF SVM", "Gaussian Process",
-                      "Decision Tree", "Random Forest", "Neural Net", "AdaBoost",
-                      "Naive Bayes", "QDA"]
+        self.names = [
+            "Nearest Neighbors",
+            "Linear SVM",
+            "RBF SVM",
+            "Gaussian Process",
+            "Decision Tree",
+            "Random Forest",
+            "Neural Net",
+            "AdaBoost",
+            "Naive Bayes",
+            "QDA",
+        ]
         self.model_name = None
         self.classifiers = [
             KNeighborsClassifier(5),
@@ -107,31 +117,31 @@ class ClassifierOfflineTrain(object):
             SVC(gamma=0.01, C=1.0, verbose=True),
             GaussianProcessClassifier(1.0 * RBF(1.0)),
             DecisionTreeClassifier(max_depth=5),
-            RandomForestClassifier(
-                max_depth=30, n_estimators=100, max_features="auto"),
+            RandomForestClassifier(max_depth=30, n_estimators=100, max_features="auto"),
             MLPClassifier((20, 30, 40)),  # Neural Net
             AdaBoostClassifier(),
             GaussianNB(),
-            QuadraticDiscriminantAnalysis()]
+            QuadraticDiscriminantAnalysis(),
+        ]
 
     def _predict_proba(self, X):
-        ''' Predict the probability of feature X belonging to each of the class Y[i] '''
+        """ Predict the probability of feature X belonging to each of the class Y[i] """
         Y_probs = self.clf.predict_proba(self.pca.transform(X))
         return Y_probs  # np.array with a length of len(classes)
 
 
 class ClassifierOnlineTest(object):
-    ''' Classifier for online inference.
-        The input data to this classifier is the raw skeleton data, so they
-            are processed by `class FeatureGenerator` before sending to the
-            self.model trained by `class ClassifierOfflineTrain`. 
-    '''
+    """Classifier for online inference.
+    The input data to this classifier is the raw skeleton data, so they
+        are processed by `class FeatureGenerator` before sending to the
+        self.model trained by `class ClassifierOfflineTrain`.
+    """
 
     def __init__(self, model_path, action_labels, window_size, human_id=0):
 
         # -- Settings
         self.human_id = human_id
-        with open(model_path, 'rb') as f:
+        with open(model_path, "rb") as f:
             self.model = pickle.load(f)
         if self.model is None:
             print("my Error: failed to load model")
@@ -149,10 +159,9 @@ class ClassifierOnlineTest(object):
         self.scores = None
 
     def predict(self, skeleton):
-        ''' Predict the class (string) of the input raw skeleton '''
+        """ Predict the class (string) of the input raw skeleton """
         LABEL_UNKNOWN = ""
-        is_features_good, features = self.feature_generator.add_cur_skeleton(
-            skeleton)
+        is_features_good, features = self.feature_generator.add_cur_skeleton(skeleton)
 
         if is_features_good:
             # convert to 2d array
@@ -161,7 +170,9 @@ class ClassifierOnlineTest(object):
             curr_scores = self.model._predict_proba(features)[0]
             self.scores = self.smooth_scores(curr_scores)
 
-            if self.scores.max() < self.THRESHOLD_SCORE_FOR_DISP:  # If lower than threshold, bad
+            if (
+                self.scores.max() < self.THRESHOLD_SCORE_FOR_DISP
+            ):  # If lower than threshold, bad
                 prediced_label = LABEL_UNKNOWN
             else:
                 predicted_idx = self.scores.argmax()
@@ -171,9 +182,9 @@ class ClassifierOnlineTest(object):
         return prediced_label
 
     def smooth_scores(self, curr_scores):
-        ''' Smooth the current prediction score
-            by taking the average with previous scores
-        '''
+        """Smooth the current prediction score
+        by taking the average with previous scores
+        """
         self.scores_hist.append(curr_scores)
         DEQUE_MAX_SIZE = 2
         if len(self.scores_hist) > DEQUE_MAX_SIZE:
@@ -184,7 +195,7 @@ class ClassifierOnlineTest(object):
             for score in self.scores_hist:
                 score_sums += score
             score_sums /= len(self.scores_hist)
-            #print("\nMean score:\n", score_sums)
+            # print("\nMean score:\n", score_sums)
             return score_sums
 
         else:  # Use multiply
@@ -204,9 +215,15 @@ class ClassifierOnlineTest(object):
 
             label = self.action_labels[i]
             s = "{:<5}".format(label)
-        
-            if label=='FallingDown' and self.scores[i]>0.5:
 
-                cv2.putText(img_disp, text='Falling Down', org=(650, 30),
-                        fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=FONT_SIZE,
-                        color=(0, 0, int(COLOR_INTENSITY)), thickness=1)
+            if label == "FallingDown" and self.scores[i] > 0.5:
+
+                cv2.putText(
+                    img_disp,
+                    text="Falling Down",
+                    org=(650, 30),
+                    fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                    fontScale=FONT_SIZE,
+                    color=(0, 0, int(COLOR_INTENSITY)),
+                    thickness=1,
+                )

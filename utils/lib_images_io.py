@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-'''
+"""
 Classes for reading images from video, folder, or web camera,
     and for writing images to video file.
 
@@ -19,7 +19,7 @@ Main classes and functions:
     * Test:
         def test_ReadFromWebcam
 
-'''
+"""
 
 import os
 import warnings
@@ -33,9 +33,9 @@ import multiprocessing
 
 
 class ReadFromFolder(object):
-    ''' A image reader class for reading images from a folder.
+    """A image reader class for reading images from a folder.
     By default, all files under the folder are considered as image file.
-    '''
+    """
 
     def __init__(self, folder_path):
         self.filenames = sorted(glob.glob(folder_path + "/*"))
@@ -62,11 +62,11 @@ class ReadFromFolder(object):
 
 class ReadFromVideo(object):
     def __init__(self, video_path, sample_interval=1):
-        ''' A video reader class for reading video frames from video.
+        """A video reader class for reading video frames from video.
         Arguments:
             video_path
             sample_interval {int}: sample every kth image.
-        '''
+        """
         if not os.path.exists(video_path):
             raise IOError("Video not exist: " + video_path)
         assert isinstance(sample_interval, int) and sample_interval >= 1
@@ -79,6 +79,7 @@ class ReadFromVideo(object):
         self._fps = self.get_fps()
         if not self._fps >= 0.0001:
             import warnings
+
             warnings.warn("Invalid fps of video: {}".format(video_path))
 
     def has_image(self):
@@ -110,7 +111,7 @@ class ReadFromVideo(object):
     def get_fps(self):
 
         # Find OpenCV version
-        (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
+        (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split(".")
 
         # With webcam get(CV_CAP_PROP_FPS) does not work.
         # Let's see for ourselves.
@@ -125,11 +126,11 @@ class ReadFromVideo(object):
 
 class ReadFromWebcam(object):
     def __init__(self, max_framerate=30.0, webcam_idx=0):
-        ''' Read images from web camera.
+        """Read images from web camera.
         Argument:
             max_framerate {float}: the real framerate will be reduced below this value.
             webcam_idx {int}: index of the web camera on your laptop. It should be 0 by default.
-        '''
+        """
         # Settings
         self._max_framerate = max_framerate
         queue_size = 3
@@ -140,9 +141,8 @@ class ReadFromWebcam(object):
 
         # Use a thread to keep on reading images from web camera
         self._imgs_queue = queue.Queue(maxsize=queue_size)
-        self._is_thread_alive = multiprocessing.Value('i', 1)
-        self._thread = threading.Thread(
-            target=self._thread_reading_webcam_images)
+        self._is_thread_alive = multiprocessing.Value("i", 1)
+        self._thread = threading.Thread(target=self._thread_reading_webcam_images)
         self._thread.start()
 
         # Manually control the framerate of the webcam by sleeping
@@ -201,25 +201,29 @@ class VideoWriter(object):
     def write(self, img):
         self._cnt_img += 1
         if self._cnt_img == 1:  # initialize the video writer
-            fourcc = cv2.VideoWriter_fourcc(*'XVID')  # define the codec
+            fourcc = cv2.VideoWriter_fourcc(*"XVID")  # define the codec
             self._width = img.shape[1]
             self._height = img.shape[0]
             self._video_writer = cv2.VideoWriter(
-                self._video_path, fourcc, self._framerate, (self._width, self._height))
+                self._video_path, fourcc, self._framerate, (self._width, self._height)
+            )
         self._video_writer.write(img)
-    
+
     def stop(self):
         self.__del__()
-    
+
     def __del__(self):
         if self._cnt_img > 0:
             self._video_writer.release()
-            print("Complete writing {}fps and {}s video to {}".format(
-                self._framerate, self._cnt_img/self._framerate, self._video_path))
+            print(
+                "Complete writing {}fps and {}s video to {}".format(
+                    self._framerate, self._cnt_img / self._framerate, self._video_path
+                )
+            )
 
 
 class ImageDisplayer(object):
-    ''' A simple wrapper of using cv2.imshow to display image '''
+    """ A simple wrapper of using cv2.imshow to display image """
 
     def __init__(self):
         self._window_name = "Fall Detection Window"
@@ -234,10 +238,11 @@ class ImageDisplayer(object):
 
 
 def test_ReadFromWebcam():
-    ''' Test the class ReadFromWebcam '''
+    """ Test the class ReadFromWebcam """
     webcam_reader = ReadFromWebcam(max_framerate=10)
     img_displayer = ImageDisplayer()
     import itertools
+
     for i in itertools.count():
         img = webcam_reader.read_image()
         if img is None:

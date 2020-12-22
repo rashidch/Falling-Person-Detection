@@ -1,4 +1,4 @@
-'''
+"""
 Description:
     Convert a video to a folder of images.
     
@@ -8,7 +8,7 @@ Example of usage:
         -o /home/feiyu/Desktop/learn_coding/test_data/video_convert_result \
         --sample_interval 2 \
         --max_frames 30
-'''
+"""
 
 import numpy as np
 import cv2
@@ -23,31 +23,43 @@ import csv
 import glob
 import argparse
 import itertools
-ROOT = os.path.dirname(os.path.abspath(__file__))+"/"
+
+ROOT = os.path.dirname(os.path.abspath(__file__)) + "/"
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Convert a folder of images into a video.")
+        description="Convert a folder of images into a video."
+    )
     parser.add_argument("-i", "--input_video_path", type=str, required=True)
     parser.add_argument("-o", "--output_folder_path", type=str, required=True)
-    parser.add_argument("-s", "--sample_interval", type=int, required=False,
-                        default=1,
-                        help="Sample every nth video frame to save to folder. Default 1.")
-    parser.add_argument("-m", "--max_frames", type=int, required=False,
-                        default=100000,
-                        help="Max number of video frames to save to folder. Default 1e5")
+    parser.add_argument(
+        "-s",
+        "--sample_interval",
+        type=int,
+        required=False,
+        default=1,
+        help="Sample every nth video frame to save to folder. Default 1.",
+    )
+    parser.add_argument(
+        "-m",
+        "--max_frames",
+        type=int,
+        required=False,
+        default=100000,
+        help="Max number of video frames to save to folder. Default 1e5",
+    )
     args = parser.parse_args()
     return args
 
 
 class ReadFromVideo(object):
     def __init__(self, video_path, sample_interval=1):
-        ''' A video reader class for reading video frames from video.
+        """A video reader class for reading video frames from video.
         Arguments:
             video_path
             sample_interval {int}: sample every kth image.
-        '''
+        """
         if not os.path.exists(video_path):
             raise IOError("Video not exist: " + video_path)
         assert isinstance(sample_interval, int) and sample_interval >= 1
@@ -60,6 +72,7 @@ class ReadFromVideo(object):
         self.fps = self.get_fps()
         if not self.fps >= 0.0001:
             import warnings
+
             warnings.warn("Invalid fps of video: {}".format(video_path))
 
     def has_image(self):
@@ -91,7 +104,7 @@ class ReadFromVideo(object):
     def get_fps(self):
 
         # Find OpenCV version
-        (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
+        (major_ver, minor_ver, subminor_ver) = (cv2.__version__).split(".")
 
         # With webcam get(CV_CAP_PROP_FPS) does not work.
         # Let's see for ourselves.
@@ -102,6 +115,7 @@ class ReadFromVideo(object):
         else:
             fps = self.video.get(cv2.CAP_PROP_FPS)
         return fps
+
 
 class ImageDisplayer(object):
     def __init__(self):
@@ -139,8 +153,10 @@ def main(args):
             cv2.imwrite(set_output_filename(cnt_img), img)
             img_displayer.display(img)
             if cnt_img == args.max_frames:
-                print("Read {} frames. ".format(cnt_img) +
-                      "Reach the max_frames setting. Stop.")
+                print(
+                    "Read {} frames. ".format(cnt_img)
+                    + "Reach the max_frames setting. Stop."
+                )
                 break
 
 

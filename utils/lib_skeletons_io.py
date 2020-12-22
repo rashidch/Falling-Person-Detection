@@ -1,4 +1,4 @@
-'''
+"""
 This script defines the functions for reading/saving images & skeletons data:
 
 * def get_training_imgs_info
@@ -13,7 +13,7 @@ This script defines the functions for reading/saving images & skeletons data:
     
     Load data from `skeletons_info.txt`.
 
-'''
+"""
 
 import numpy as np
 import cv2
@@ -25,26 +25,24 @@ from sklearn.preprocessing import OneHotEncoder
 
 # Image info includes: [cnt_action, cnt_clip, cnt_image, img_action_label, filepath]
 LEN_IMG_INFO = 5
-LEN_SKELETON_XY = 18*2
+LEN_SKELETON_XY = 18 * 2
 NaN = 0  # `Not A Number`, which is the value for invalid data.
 
 # -- Functions
 
 
-def get_training_imgs_info(
-        valid_images_txt,
-        img_filename_format="{:05d}.jpg"):
-    '''
+def get_training_imgs_info(valid_images_txt, img_filename_format="{:05d}.jpg"):
+    """
     Arguments:
-        valid_images_txt {str}: path of the txt file that 
+        valid_images_txt {str}: path of the txt file that
             specifies the indices and labels of training images.
     Return:
         images_info {list of list}: shape=PxN, where:
             P: number of training images
-            N=5: number of tags of that image, including: 
+            N=5: number of tags of that image, including:
                 [cnt_action, cnt_clip, cnt_image, action_label, filepath]
-                An example: [8, 49, 2687, 'wave', 'wave_03-02-12-35-10-194/00439.jpg']                
-    '''
+                An example: [8, 49, 2687, 'wave', 'wave_03-02-12-35-10-194/00439.jpg']
+    """
     images_info = list()
 
     with open(valid_images_txt) as f:
@@ -59,9 +57,9 @@ def get_training_imgs_info(
 
         for cnt_line, line in enumerate(f):
 
-            if line.find('_') != -1:  # A new video type
+            if line.find("_") != -1:  # A new video type
                 folder_name = line[:-1]
-                action_label = folder_name.split('_')[0]
+                action_label = folder_name.split("_")[0]
                 if action_label not in actions:
                     cnt_action += 1
                     actions.add(action_label)
@@ -73,15 +71,20 @@ def get_training_imgs_info(
                 idx_start = indices[0]
                 idx_end = indices[1]
                 cnt_clip += 1
-                for i in range(idx_start, idx_end+1):
-                    filepath = folder_name+"/" + img_filename_format.format(i)
+                for i in range(idx_start, idx_end + 1):
+                    filepath = folder_name + "/" + img_filename_format.format(i)
                     cnt_image += 1
                     action_images_cnt[action_label] += 1
 
                     # Save: 5 values
-                    image_info = [cnt_action, cnt_clip,
-                                  cnt_image, action_label, filepath]
-                    assert(len(image_info) == LEN_IMG_INFO)
+                    image_info = [
+                        cnt_action,
+                        cnt_clip,
+                        cnt_image,
+                        action_label,
+                        filepath,
+                    ]
+                    assert len(image_info) == LEN_IMG_INFO
                     images_info.append(image_info)
                     # An example: [8, 49, 2687, 'wave', 'wave_03-02-12-35-10-194/00439.jpg']
 
@@ -90,20 +93,18 @@ def get_training_imgs_info(
         print("Number of training images = {}".format(cnt_image))
         print("Number of training images of each action:")
         for action in actions:
-            print("  {:>8}| {:>4}|".format(
-                action, action_images_cnt[action]))
+            print("  {:>8}| {:>4}|".format(action, action_images_cnt[action]))
 
     return images_info
 
 
 class ReadValidImagesAndActionTypesByTxt(object):
-    ''' This is for reading training images configured by a txt file.
-        Each training image should contain a person who is performing certain type of action. 
-    '''
+    """This is for reading training images configured by a txt file.
+    Each training image should contain a person who is performing certain type of action.
+    """
 
-    def __init__(self, img_folder, valid_imgs_txt,
-                 img_filename_format="{:05d}.jpg"):
-        '''
+    def __init__(self, img_folder, valid_imgs_txt, img_filename_format="{:05d}.jpg"):
+        """
         Arguments:
             img_folder {str}: A folder that contains many sub folders.
                 Each subfolder has many images named as xxxxx.jpg.
@@ -119,9 +120,8 @@ class ReadValidImagesAndActionTypesByTxt(object):
                     54 62
                     75 84
             img_filename_format {str}: format of the image filename
-        '''
-        self.images_info = get_training_imgs_info(
-            valid_imgs_txt, img_filename_format)
+        """
+        self.images_info = get_training_imgs_info(valid_imgs_txt, img_filename_format)
         self.imgs_path = img_folder
         self.i = 0
         self.num_images = len(self.images_info)
@@ -132,25 +132,27 @@ class ReadValidImagesAndActionTypesByTxt(object):
     def save_images_info(self, filepath):
         folder_path = os.path.dirname(filepath)
         os.makedirs(folder_path, exist_ok=True)
-        with open(filepath, 'w') as f:
+        with open(filepath, "w") as f:
             simplejson.dump(self.images_info, f)
 
     def read_image(self):
-        '''
+        """
         Returns:
-            img {RGB image}: 
-                Next RGB image from folder. 
-            img_action_label {str}: 
+            img {RGB image}:
+                Next RGB image from folder.
+            img_action_label {str}:
                 Action label obtained from folder name.
-            img_info {list}: 
+            img_info {list}:
                 Something like [1, 7, 54, "jump", "jump_03-02-12-34-01-795/00240.jpg"]
         Raise:
             RuntimeError, if fail to read next image due to wrong index or wrong filepath.
-        '''
+        """
         self.i += 1
         if self.i > len(self.images_info):
-            raise RuntimeError(f"There are only {len(self.images_info)} images, "
-                               f"but you try to read the {self.i}th image")
+            raise RuntimeError(
+                f"There are only {len(self.images_info)} images, "
+                f"but you try to read the {self.i}th image"
+            )
         filepath = self.get_filename(self.i)
         img = self.imread(self.i)
         if img is None:
@@ -166,21 +168,21 @@ class ReadValidImagesAndActionTypesByTxt(object):
         # The 4th element of
         # [1, 7, 54, "jump", "jump_03-02-12-34-01-795/00240.jpg"]
         # See "get_training_imgs_info" for the data format
-        return self.images_info[index-1][4]
+        return self.images_info[index - 1][4]
 
     def get_action_label(self, index):
         # The 3rd element of
         # [1, 7, 54, "jump", "jump_03-02-12-34-01-795/00240.jpg"]
         # See "get_training_imgs_info" for the data format
-        return self.images_info[index-1][3]
+        return self.images_info[index - 1][3]
 
     def get_image_info(self, index):
         # Something like [1, 7, 54, "jump", "jump_03-02-12-34-01-795/00240.jpg"]
-        return self.images_info[index-1]
+        return self.images_info[index - 1]
 
 
 def load_skeleton_data(filepath, classes):
-    ''' Load training data from skeletons_info.txt.
+    """Load training data from skeletons_info.txt.
     Some notations:
         N: number of valid data.
         P: feature dimension. Here P=36.
@@ -192,11 +194,11 @@ def load_skeleton_data(filepath, classes):
         Y: {list of int, len=N}:            Label of each valid image.
         video_indices {list of int, len=N}:  The video index of which the image belongs to.
         classes {list of string, len=C}:    The classes of all actions.
-    '''
+    """
 
     label2index = {c: i for i, c in enumerate(classes)}
 
-    with open(filepath, 'r') as f:
+    with open(filepath, "r") as f:
 
         # Load data
         dataset = simplejson.load(f)
@@ -204,13 +206,15 @@ def load_skeleton_data(filepath, classes):
         # Remove bad data. A bad data is filled with zeros.
         def is_good_data(row):
             return row[0] != 0
+
         dataset = [row for i, row in enumerate(dataset) if is_good_data(row)]
 
         # Get skeleton data, which is in the pos [5, 41)
         # LEN_IMG_INFO = 5
         # LEN_SKELETON_XY = 36
-        X = np.array([row[LEN_IMG_INFO:LEN_IMG_INFO+LEN_SKELETON_XY]
-                      for row in dataset])
+        X = np.array(
+            [row[LEN_IMG_INFO : LEN_IMG_INFO + LEN_SKELETON_XY] for row in dataset]
+        )
 
         # row[1] is the video index of the image
         video_indices = [row[1] for row in dataset]
@@ -235,9 +239,11 @@ def load_skeleton_data(filepath, classes):
         N = len(Y)
         P = len(X[0])
         C = len(classes)
-        print(f"\nNumber of samples = {N} \n"
-              f"Raw feature length = {P} \n"
-              f"Number of classes = {C}")
+        print(
+            f"\nNumber of samples = {N} \n"
+            f"Raw feature length = {P} \n"
+            f"Number of classes = {C}"
+        )
         print(f"Classes: {classes}")
 
         return X, Y, video_indices
@@ -246,22 +252,24 @@ def load_skeleton_data(filepath, classes):
 
 
 def _get_skeletons_with_complete_upper_body(X, NaN=0):
-    ''' 
+    """
     Find good skeletons whose upper body joints don't contain `NaN`.
     Return the indices of these skeletons.
     Arguments:
-        X {np.array, shape=NxP}: Feature of each sample. 
+        X {np.array, shape=NxP}: Feature of each sample.
             N is number of samples, P is feature dimension.
             P = 36 = 18*2.
         NaN {int}: `Not A Number`, which is the value for invalid data.
-    '''
+    """
 
     left_idx, right_idx = 0, 14 * 2  # 1head+1neck+2*(3arms + 3legs)
 
     def is_valid(x):
         return len(np.where(x[left_idx:right_idx] == NaN)[0]) == 0
+
     valid_indices = [i for i, x in enumerate(X) if is_valid(x)]
     return valid_indices
+
 
 # This function is deprecated.
 # It was used for getting classes from the data,

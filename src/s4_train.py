@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-''' This script does:
+""" This script does:
 1. Load features and labels from csv files
 2. Train the model
 3. Save the model to `model/` folder.
-'''
+"""
 
 import numpy as np
 import time
@@ -17,8 +17,9 @@ from sklearn.metrics import classification_report
 if True:  # Include project path
     import sys
     import os
-    ROOT = os.path.dirname(os.path.abspath(__file__))+"/../"
-    CURR_PATH = os.path.dirname(os.path.abspath(__file__))+"/"
+
+    ROOT = os.path.dirname(os.path.abspath(__file__)) + "/../"
+    CURR_PATH = os.path.dirname(os.path.abspath(__file__)) + "/"
     sys.path.append(ROOT)
 
     import utils.lib_plot as lib_plot
@@ -26,9 +27,9 @@ if True:  # Include project path
     from utils.lib_classifier import ClassifierOfflineTrain
 
 
-
 def par(path):  # Pre-Append ROOT to the path if it's not absolute
     return ROOT + path if (path and path[0] != "/") else path
+
 
 # -- Settings
 
@@ -46,15 +47,17 @@ DST_MODEL_PATH = par(cfg["output"]["model_path"])
 
 # -- Functions
 
+
 def train_test_split(X, Y, ratio_of_test_size):
-    ''' Split training data by ratio '''
+    """ Split training data by ratio """
     IS_SPLIT_BY_SKLEARN_FUNC = True
 
     # Use sklearn.train_test_split
     if IS_SPLIT_BY_SKLEARN_FUNC:
         RAND_SEED = 1
         tr_X, te_X, tr_Y, te_Y = sklearn.model_selection.train_test_split(
-            X, Y, test_size=ratio_of_test_size, random_state=RAND_SEED)
+            X, Y, test_size=ratio_of_test_size, random_state=RAND_SEED
+        )
 
     # Make train/test the same.
     else:
@@ -64,8 +67,9 @@ def train_test_split(X, Y, ratio_of_test_size):
         te_Y = Y.copy()
     return tr_X, te_X, tr_Y, te_Y
 
+
 def evaluate_model(model, classes, tr_X, tr_Y, te_X, te_Y):
-    ''' Evaluate accuracy and time cost '''
+    """ Evaluate accuracy and time cost """
 
     # Accuracy
     t0 = time.time()
@@ -77,19 +81,21 @@ def evaluate_model(model, classes, tr_X, tr_Y, te_X, te_Y):
     print(f"Accuracy on testing set is {te_accu}")
 
     print("Accuracy report:")
-    print(classification_report(
-        te_Y, te_Y_predict, target_names=classes, output_dict=False))
+    print(
+        classification_report(
+            te_Y, te_Y_predict, target_names=classes, output_dict=False
+        )
+    )
 
     # Time cost
     average_time = (time.time() - t0) / (len(tr_Y) + len(te_Y))
-    print("Time cost for predicting one sample: "
-          "{:.5f} seconds".format(average_time))
+    print("Time cost for predicting one sample: " "{:.5f} seconds".format(average_time))
 
     # Plot accuracy
     axis, cf = lib_plot.plot_confusion_matrix(
-        te_Y, te_Y_predict, classes, normalize=False, size=(12, 8))
+        te_Y, te_Y_predict, classes, normalize=False, size=(12, 8)
+    )
     plt.show()
-
 
 
 # -- Main
@@ -101,10 +107,9 @@ def main():
     print("\nReading csv files of classes, features, and labels ...")
     X = np.loadtxt(SRC_PROCESSED_FEATURES, dtype=float)  # features
     Y = np.loadtxt(SRC_PROCESSED_FEATURES_LABELS, dtype=int)  # labels
-    
+
     # -- Train-test split
-    tr_X, te_X, tr_Y, te_Y = train_test_split(
-        X, Y, ratio_of_test_size=0.3)
+    tr_X, te_X, tr_Y, te_Y = train_test_split(X, Y, ratio_of_test_size=0.3)
     print("\nAfter train-test split:")
     print("Size of training data X:    ", tr_X.shape)
     print("Number of training samples: ", len(tr_Y))
@@ -121,7 +126,7 @@ def main():
 
     # -- Save model
     print("\nSave model to " + DST_MODEL_PATH)
-    with open(DST_MODEL_PATH, 'wb') as f:
+    with open(DST_MODEL_PATH, "wb") as f:
         pickle.dump(model, f)
 
 
