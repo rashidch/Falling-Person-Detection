@@ -13,26 +13,6 @@
 **Highlights**: 
 2 Poses; one person; Real-time and multi-frame based recognition algorithm.
 
-**Contents:**
-- [1. Algorithm](#1-algorithm)
-- [2. Install Dependency (OpenPose)](#2-install-dependency--openpose-)
-- [3. Program structure](#3-program-structure)
-  * [Diagram](#diagram)
-  * [Main scripts](#main-scripts)
-- [4. How to run: Inference](#4-how-to-run--inference)
-  * [Introduction](#introduction)
-  * [Test on video file](#test-on-video-file)
-  * [Test on a folder of images](#test-on-a-folder-of-images)
-  * [Test on web camera](#test-on-web-camera)
-- [5. Training data](#5-training-data)
-  * [Download my data](#download-my-data)
-  * [Data format](#data-format)
-  * [Classes](#classes)
-- [6. How to run: Training](#6-how-to-run--training)
-- [7. Result and Performance](#7-result-and-performance)
-
-
-
 # 1. Algorithm
 
 
