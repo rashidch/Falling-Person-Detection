@@ -96,10 +96,6 @@ python run.py --model=mobilenet_thin --resize=432x368 --image=./images/p1.jpg
 
 # 3. Program structure
 
-## Diagram
-
-![](doc/system_diagram.png)
-
 Trouble shooting:
   * How to change features?
 
@@ -296,12 +292,3 @@ Then, follow the following steps to do the training:
 By default, the intermediate data are saved to [data_proc/](data_prco/), and the model is saved to [model/trained_classifier.pickle](model/trained_classifier.pickle).  
 After training is done, you can run the inference script `src/s5_test.py` as described in Section `4. How to run: Inference`.
 
-# 7. Result and Performance
-
-Unfortunately this project only works well on myself, because I only used the video of myself.
-
-The performance is bad for (1) people who have different body shape, (2) people are far from the camera. **How to improve?** I guess the first thing to do is to collect larger training set from different people. Then, improve the data augmentation and featuer selection.
-
-Besides, my simple tracking algorithm only works for a few number of people (maybe 5). 
-
-Due to the not-so-good performance of action recognition, I guess you can only use this project for course demo, but not for any commercial applications ... T.T 
