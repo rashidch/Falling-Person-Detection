@@ -16,7 +16,7 @@
 # 1. Algorithm
 
 
-We collected videos of Falling Persons with 3 poses: `['Falling', 'Standing', 'Sitting']`. 
+We collected videos of Falling Persons with 3 poses: `['Falling', 'Standing']`. 
 
 The workflow of the algorithm is:
 *  Get the joints' positions by [OpenPose](https://github.com/ildoonet/tf-pose-estimation).  
