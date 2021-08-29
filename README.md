@@ -9,7 +9,6 @@
 
 ![Result of ROI based Model](https://github.com/rashidch/Falling-Person-Detection/blob/master/doc/ROI_MODEL_result.jpg)
 
-This repo is build on top of [https://github.com/felixchenfy/Realtime-Action-Recognition](https://github.com/felixchenfy/Realtime-Action-Recognition)
 
 **Highlights**: 
 2 Poses; one person; Real-time and multi-frame based recognition algorithm.
